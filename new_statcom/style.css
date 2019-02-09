@@ -1,0 +1,12 @@
+img#logo {
+    width: 5em;
+    display: inline-block;
+    float:left;
+}
+
+span#logo-text {
+    width: auto;
+    display: inline-block;
+    vertical-align: text-top;
+    width: .5em;
+}
