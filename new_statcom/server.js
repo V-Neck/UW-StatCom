@@ -11,7 +11,8 @@ const nodemailer = require("nodemailer");
 var formatJSON = function(object) {
     var output = ""
     for (key in object) {
-        output += (key + ":<br>    " + object[key] + "<br>");
+        var bold_key = "<b>" + key + "</b>"
+        output += (bold_key + ": " + object[key] + "<br>");
     }
 
     return output
