@@ -1,43 +1,70 @@
-const express = require('express')
+const express = require('express');
+const fs = require('fs');
 const http = require('http');
 const favicon = require('serve-favicon');
-const path    = require('path');
+const path = require('path');
 const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer');
-const fs = require("fs");
-const server = express();
-const creds = JSON.parse(fs.readFileSync("cred.js"));
-
 const hostname = 'vneck.lan';
 const port = 1024;
+const nodemailer = require("nodemailer");
 
-var send = require("gmail-send")({
-    user: creds['user'],
-    pass: creds['pass'],
-    to  : creds['user'],
-    subject: "STATCOM",
-    text: ""
-});
+var formatJSON = function(object) {
+    var output = ""
+    for (key in object) {
+        output += (key + ":<br>    " + object[key] + "<br>");
+    }
 
-server.use(favicon(path.join('www','images','logo.png')));
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json())
+    return output
+}
 
-server.use(express.static('www'))
-server.use(express.static('www/pages'))
-server.use(express.static('www/*'))
+// Set Up OAuth and Nodemailer
+var creds = JSON.parse(fs.readFileSync("creds.json"))
+var mod_email = fs.readFileSync("email.txt")
 
-server.get('/', (req, res) =>
-    res.send('root')
+var transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: creds
+})
+
+// Initiate Server
+const app = express();
+
+app.use("/", express.static("www"))
+
+app.use(favicon(path.join('www','images','logo.png')));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
+
+
+// Routing
+app.get('/', (req, res) =>
+    res.redirect("/pages")
 );
 
-server.post('*/register', function(req, res){
+app.post('*/register', function(req, res){
     form_data = req['body'];
-    console.log(form_data);
+
+    var mailOptions = {
+        from: 'evilepicproductions@gmail.com', // sender address
+        to: mod_email, // list of receivers
+        subject: form_data['org'] + " wants to register with StatCom", // Subject line
+        html: formatJSON(form_data) // plain text body
+    };
+
+    transporter.sendMail(mailOptions, function (err, info) {
+       if(err)
+         console.log(err)
+       else
+         console.log(info);
+    });
+
+    res.redirect('../success.html');
 });
 
-
-server.listen(port,
-    function(){}    
+app.listen(port,
+    function(){
+        console.log("Server Running...")
+    }
 );
-
