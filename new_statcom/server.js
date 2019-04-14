@@ -32,9 +32,9 @@ var transporter = nodemailer.createTransport({
 // Initiate Server
 const app = express();
 
-app.use("/", express.static("www"))
+app.use(express.static("www"))
 
-app.use(favicon(path.join('www','images','logo.png')));
+app.use(favicon(path.join('www', 'images','logo.png')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 
