@@ -12,6 +12,6 @@
     height: 1em;
 }
 
-#intro {
-
+label {
+    font-weight: bold;
 }
