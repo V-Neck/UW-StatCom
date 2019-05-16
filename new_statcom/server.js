@@ -1,13 +1,17 @@
 const express = require('express');
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const favicon = require('serve-favicon');
 const path = require('path');
 const bodyParser = require('body-parser');
 const hostname = 'vneck.lan';
 const port = 1024;
 const nodemailer = require("nodemailer");
+const {google} = require('googleapis');
 
+///etc/letsencrypt/live/statcom.stat.uw.edu/fullchain.pem
+//etc/letsencrypt/live/statcom.stat.uw.edu/privkey.pem/
 var formatJSON = function(object) {
     var output = ""
     for (key in object) {
@@ -29,12 +33,14 @@ var transporter = nodemailer.createTransport({
     auth: creds
 })
 
+var sheets = google.sheets({version: 'v4', creds});
+
 // Initiate Server
 const app = express();
 
-app.use("/", express.static("www"))
+app.use(express.static("www"))
 
-app.use(favicon(path.join('www','images','logo.png')));
+app.use(favicon(path.join('www', 'images','logo.png')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 

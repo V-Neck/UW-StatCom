@@ -12,6 +12,15 @@
     height: 1em;
 }
 
-#intro {
-
+label {
+    font-weight: bold;
 }
+
+.background {
+	background-image: url("http://statcom.stat.uw.edu/images/smol.jpg");
+}
+
+.transparent {
+	background-color: rgba(255, 255, 255, .7) !important;
+}
+

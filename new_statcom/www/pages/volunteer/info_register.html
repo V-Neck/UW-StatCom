@@ -71,8 +71,30 @@
                 </div>
 
                 <div class="col">
-                    <label for="org">Association with UW</label>
-                    <input name="org" id="org"  class="form-control" placeholder="Researcher" />
+                    <label for="deg_prog">Degree Program</label>
+                    <select name="deg_prog" id="deg_prog"  class="form-control">
+			<option>Bachelor's</option>
+			<option>Master's</option>
+			<option>Ph.D</option>
+			<option>Other</option>
+		    </select>
+                </div>
+
+                <div class="col">
+                    <label for="year">Year</label>
+                    <select name="year" id="year"  class="form-control">
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option>4</option>
+			<option>5</option>
+			<option>≥6</option>
+		    </select>
+                </div>
+
+                <div class="col">
+                    <label for="org">Department</label>
+                    <input name="org" id="org"  class="form-control" placeholder="Statistics & Linguistics" />
                 </div>
 
                 <div class="col">
@@ -89,8 +111,9 @@
 
                 <div class="col">
                     <label for="summary">Describe your background in Statistics</label>
-                    <textarea name="context" id="context"  class="form-control" placeholder="I've taken Stat 311"></textarea>
+                    <textarea name="context" id="context"  class="form-control" placeholder="coursework, previous projects, relevant experience"></textarea>
                 </div>
+
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
