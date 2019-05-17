@@ -9,31 +9,23 @@ const hostname = 'vneck.lan';
 const port = 1024;
 const nodemailer = require("nodemailer");
 const {google} = require('googleapis');
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+const sanitize = require('mongo-sanitize');
 
-///etc/letsencrypt/live/statcom.stat.uw.edu/fullchain.pem
-//etc/letsencrypt/live/statcom.stat.uw.edu/privkey.pem/
-var formatJSON = function(object) {
-    var output = ""
-    for (key in object) {
-        var bold_key = "<b>" + key + "</b>"
-        output += (bold_key + ": " + object[key] + "<br>");
-    }
+// D A T A B A S E
+const url = 'mongodb://localhost:12345';
+const dbName = 'Hello';
+const client = new MongoClient(url);
 
-    return output
+var pushSubmission = function(table, row){
+	client.connect(function(err, client) {
+		const db = client.db(dbName);
+		db.collection(table).insertOne(row, function(err, r) {
+			client.close();
+		});
+	});
 }
-
-// Set Up OAuth and Nodemailer
-var creds = JSON.parse(fs.readFileSync("creds.json"))
-var mod_email = fs.readFileSync("email.txt")
-
-var transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: creds
-})
-
-var sheets = google.sheets({version: 'v4', creds});
 
 // Initiate Server
 const app = express();
@@ -50,23 +42,14 @@ app.get('/', (req, res) =>
     res.redirect("/pages")
 );
 
-app.post('*/register', function(req, res){
-    form_data = req['body'];
+app.post('*/org_register', function(req, res){
+    console.log(req.body);
+    pushSubmission('clients', sanitize(req.body))
+    res.redirect('../success.html');
+});
 
-    var mailOptions = {
-        from: 'evilepicproductions@gmail.com', // sender address
-        to: mod_email, // list of receivers
-        subject: form_data['org'] + " wants to register with StatCom", // Subject line
-        html: formatJSON(form_data) // plain text body
-    };
-
-    transporter.sendMail(mailOptions, function (err, info) {
-       if(err)
-         console.log(err)
-       else
-         console.log(info);
-    });
-
+app.post('*/vol_register', function(req, res){
+    pushSubmission('volunteers', sanitize(req.body)) 
     res.redirect('../success.html');
 });
 
